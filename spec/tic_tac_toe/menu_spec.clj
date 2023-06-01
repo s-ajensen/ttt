@@ -32,4 +32,18 @@
       (should= {:state :cvc-menu} (next-state {:state :mode-menu} 3)))
 
     (it "displays menu again with bad input"
-      (should= {:state :mode-menu} (next-state {:state :mode-menu} nil)))))
+      (should= {:state :mode-menu} (next-state {:state :mode-menu} nil))))
+
+  (describe "pvp menu"
+    (it "displays size options"
+      (should= "1) 3x3\n2) 4x4\n"
+        (with-out-str (render {:state :pvp-menu}))))
+
+    (it "selects 3x3 game"
+      (should= {:state :3x3-game} (next-state {:state :pvp-menu} 1)))
+
+    (it "selects 4x4 game"
+      (should= {:state :4x4-game} (next-state {:state :pvp-menu} 2)))
+
+    (it "displays menu again with bad input"
+      (should= {:state :pvp-menu} (next-state {:state :pvp-menu} nil)))))

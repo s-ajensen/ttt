@@ -2,11 +2,20 @@
 
 (defmulti render :state)
 
+(defn fmt-opt [idx option] (str (inc idx) ") " option \newline))
+
+(defn fmt-opts [options]
+  (->> (map-indexed fmt-opt options)
+    (apply str)))
+
 (defmethod render :main-menu [state]
-  (println "1) New Game\n2) Replay Game"))
+  (print (fmt-opts ["New Game" "Replay Game"])))
 
 (defmethod render :mode-menu [state]
-  (println "1) Player v. Player\n2) Player v. Computer\n3) Computer v. Computer"))
+  (print (fmt-opts ["Player v. Player" "Player v. Computer" "Computer v. Computer"])))
+
+(defmethod render :pvp-menu [state]
+  (print (fmt-opts ["3x3" "4x4"])))
 
 (defn select-opt [options selection default-state]
   (let [opt-map (->> (map #(hash-map :state %) options)
@@ -16,7 +25,8 @@
 
 (def menus
   {:main-menu [:mode-menu :replay-menu]
-   :mode-menu [:pvp-menu :pvc-menu :cvc-menu]})
+   :mode-menu [:pvp-menu :pvc-menu :cvc-menu]
+   :pvp-menu  [:3x3-game :4x4-game]})
 
 (defn next-state [cur-state selection]
   (select-opt ((:state cur-state) menus) selection cur-state))
