@@ -14,10 +14,9 @@
                   (into (sorted-map)))]
     (get opt-map selection default-state)))
 
-(defmulti next-state :state)
+(def menus
+  {:main-menu [:mode-menu :replay-menu]
+   :mode-menu [:pvp-menu :pvc-menu :cvc-menu]})
 
-(defmethod next-state :main-menu [state selection]
-  (select-opt [:mode-menu :replay-menu] selection state))
-
-(defmethod next-state :mode-menu [state selection]
-  (select-opt [:pvp-menu :pvc-menu :cvc-menu] selection state))
+(defn next-state [cur-state selection]
+  (select-opt ((:state cur-state) menus) selection cur-state))
