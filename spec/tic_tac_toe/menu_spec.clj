@@ -64,7 +64,14 @@
       (should= :4x4-game (:state (next-state {:state :pvp-menu} "2"))))
 
     (it "displays menu again with bad input"
-      (should= :pvp-menu (:state (next-state {:state :pvp-menu} nil)))))
+      (should= :pvp-menu (:state (next-state {:state :pvp-menu} nil))))
+
+    (it "records chosen pvp mode"
+      (should= :pvp (:mode (next-state {:state :pvp-menu} "1")))
+      (should= :pvp (:mode (next-state {:state :pvp-menu} "2"))))
+
+    (it "does not record game mode with bad input"
+      (should-be-nil (:mode (next-state {:state :pvp-menu} nil)))))
 
   (describe "hard difficulty menu"
     (it "displays size options"
@@ -92,10 +99,7 @@
       (should= :4x4-game (:state (next-state {:state :med-menu} "2"))))
 
     (it "displays menu again with bad input"
-      (should= :med-menu (:state (next-state {:state :med-menu} nil))))
-
-    (it "records chosen pvp mode"
-      (should= :pvp (:mode (next-state {:state :pvp-menu} "1")))))
+      (should= :med-menu (:state (next-state {:state :med-menu} nil)))))
 
   (describe "easy difficulty menu"
     (it "displays size options"
