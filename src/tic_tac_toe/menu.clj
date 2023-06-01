@@ -1,21 +1,19 @@
 (ns tic-tac-toe.menu)
 
-(defmulti render :state)
+(def menus
+  {:main-menu [{:name :mode-menu    :label "New Game"}
+               {:name :replay-menu  :label "Replay Game"}]
+   :mode-menu [{:name :pvp-menu     :label "Player v. Player"}
+               {:name :pvc-menu     :label "Player v. Computer"}
+               {:name :cvc-menu     :label "Computer v. Computer"}]
+   :pvp-menu  [{:name :3x3-game     :label "3x3"}
+               {:name :4x4-game     :label "4x4"}]})
 
-(defn fmt-opt [idx option] (str (inc idx) ") " option \newline))
+(defn fmt-label [idx option] (str (inc idx) ") " option \newline))
 
-(defn fmt-opts [options]
-  (->> (map-indexed fmt-opt options)
+(defn fmt-labels [options]
+  (->> (map-indexed fmt-label options)
     (apply str)))
-
-(defmethod render :main-menu [state]
-  (print (fmt-opts ["New Game" "Replay Game"])))
-
-(defmethod render :mode-menu [state]
-  (print (fmt-opts ["Player v. Player" "Player v. Computer" "Computer v. Computer"])))
-
-(defmethod render :pvp-menu [state]
-  (print (fmt-opts ["3x3" "4x4"])))
 
 (defn select-opt [options selection default-state]
   (let [opt-map (->> (map #(hash-map :state %) options)
@@ -23,10 +21,11 @@
                   (into (sorted-map)))]
     (get opt-map selection default-state)))
 
-(def menus
-  {:main-menu [:mode-menu :replay-menu]
-   :mode-menu [:pvp-menu :pvc-menu :cvc-menu]
-   :pvp-menu  [:3x3-game :4x4-game]})
+(defn select-of [state key]
+  (map key ((:state state) menus)))
+
+(defn render [cur-state]
+  (print (fmt-labels (select-of cur-state :label))))
 
 (defn next-state [cur-state selection]
-  (select-opt ((:state cur-state) menus) selection cur-state))
+  (select-opt (select-of cur-state :name) selection cur-state))
