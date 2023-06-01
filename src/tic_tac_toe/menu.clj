@@ -36,7 +36,8 @@
   (print (fmt-labels (select-of cur-state :label))))
 
 (defn next-state [cur-state selection]
-  (select-opt (select-of cur-state :name) selection cur-state))
+  (-> (select-opt (select-of cur-state :name) selection cur-state)
+    (assoc :mode :pvp)))
 
 (defn menu-loop []
   (loop [state {:state :main-menu}]

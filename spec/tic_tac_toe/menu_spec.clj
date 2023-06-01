@@ -9,13 +9,13 @@
         (with-out-str (render {:state :main-menu}))))
 
     (it "selects new game"
-      (should= {:state :mode-menu} (next-state {:state :main-menu} "1")))
+      (should= :mode-menu (:state (next-state {:state :main-menu} "1"))))
 
     (it "selects replay game"
-      (should= {:state :replay-menu} (next-state {:state :main-menu} "2")))
+      (should= :replay-menu (:state (next-state {:state :main-menu} "2"))))
 
     (it "displays menu again with bad input"
-      (should= {:state :main-menu} (next-state {:state :main-menu} nil))))
+      (should= :main-menu (:state (next-state {:state :main-menu} nil)))))
 
   (describe "mode menu"
     (it "displays game modes"
@@ -23,16 +23,16 @@
         (with-out-str (render {:state :mode-menu}))))
 
     (it "selects pvp game"
-      (should= {:state :pvp-menu} (next-state {:state :mode-menu} "1")))
+      (should= :pvp-menu (:state (next-state {:state :mode-menu} "1"))))
 
     (it "selects pvc game"
-      (should= {:state :difficulty-menu} (next-state {:state :mode-menu} "2")))
+      (should= :difficulty-menu (:state (next-state {:state :mode-menu} "2"))))
 
     (it "selects cvc game"
-      (should= {:state :difficulty-menu} (next-state {:state :mode-menu} "3")))
+      (should= :difficulty-menu (:state (next-state {:state :mode-menu} "3"))))
 
     (it "displays menu again with bad input"
-      (should= {:state :mode-menu} (next-state {:state :mode-menu} nil))))
+      (should= :mode-menu (:state (next-state {:state :mode-menu} nil)))))
 
   (describe "difficulty menu"
     (it "displays difficulty options"
@@ -40,16 +40,16 @@
         (with-out-str (render {:state :difficulty-menu}))))
 
     (it "selects hard difficulty"
-      (should= {:state :hard-menu} (next-state {:state :difficulty-menu} "1")))
+      (should= :hard-menu (:state (next-state {:state :difficulty-menu} "1"))))
 
     (it "selects medium difficulty"
-      (should= {:state :med-menu} (next-state {:state :difficulty-menu} "2")))
+      (should= :med-menu (:state (next-state {:state :difficulty-menu} "2"))))
 
     (it "selects easy difficulty"
-      (should= {:state :easy-menu} (next-state {:state :difficulty-menu} "3")))
+      (should= :easy-menu (:state (next-state {:state :difficulty-menu} "3"))))
 
     (it "displays menu again with bad input"
-      (should= {:state :difficulty-menu} (next-state {:state :difficulty-menu} nil))))
+      (should= :difficulty-menu (:state (next-state {:state :difficulty-menu} nil)))))
 
   ; TODO reduce duplication in game menu tests
   (describe "pvp menu"
@@ -78,7 +78,7 @@
       (should= :4x4-game (:state (next-state {:state :hard-menu} "2"))))
 
     (it "displays menu again with bad input"
-      (should= {:state :hard-menu} (next-state {:state :hard-menu} nil))))
+      (should= :hard-menu (:state (next-state {:state :hard-menu} nil)))))
 
   (describe "medium difficulty menu"
     (it "displays size options"
@@ -92,7 +92,10 @@
       (should= :4x4-game (:state (next-state {:state :med-menu} "2"))))
 
     (it "displays menu again with bad input"
-      (should= {:state :med-menu} (next-state {:state :med-menu} nil))))
+      (should= :med-menu (:state (next-state {:state :med-menu} nil))))
+
+    (it "records chosen pvp mode"
+      (should= :pvp (:mode (next-state {:state :pvp-menu} "1")))))
 
   (describe "easy difficulty menu"
     (it "displays size options"
@@ -106,4 +109,4 @@
       (should= :4x4-game (:state (next-state {:state :easy-menu} "2"))))
 
     (it "displays menu again with bad input"
-      (should= {:state :easy-menu} (next-state {:state :easy-menu} nil)))))
+      (should= :easy-menu (:state (next-state {:state :easy-menu} nil))))))
