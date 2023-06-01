@@ -1,4 +1,5 @@
-(ns tic-tac-toe.menu)
+(ns tic-tac-toe.menu
+  (:require [clojure.string :as s]))
 
 (def size-opts [{:name :3x3-game     :label "3x3"}
                 {:name :4x4-game     :label "4x4"}])
@@ -23,6 +24,11 @@
   (->> (map-indexed fmt-label options)
     (apply str)))
 
+(defn get-mode [menu]
+  (-> (name menu)
+    (s/replace #"-menu" (str))
+    (keyword)))
+
 (defn select-opt [options selection default-state]
   (let [opt-map (->> (map #(hash-map :state %) options)
                   (map-indexed (fn [idx opt] {(str (inc idx)) opt}))
@@ -39,10 +45,11 @@
   (let [state (select-opt (select-of cur-state :name) selection cur-state)]
     (if (= cur-state state)
       state
-      (assoc state :mode :pvp))))
+      (assoc state :mode (get-mode (:state cur-state))))))
 
 (defn menu-loop []
   (loop [state {:state :main-menu}]
+    (print state)
     (render state)
     (flush)
     (let [input (read-line)]

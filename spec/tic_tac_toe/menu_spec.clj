@@ -85,7 +85,14 @@
       (should= :4x4-game (:state (next-state {:state :hard-menu} "2"))))
 
     (it "displays menu again with bad input"
-      (should= :hard-menu (:state (next-state {:state :hard-menu} nil)))))
+      (should= :hard-menu (:state (next-state {:state :hard-menu} nil))))
+
+    (it "records chosen hard mode"
+      (should= :hard (:mode (next-state {:state :hard-menu} "1")))
+      (should= :hard (:mode (next-state {:state :hard-menu} "2"))))
+
+    (it "does not record game mode with bad input"
+      (should-be-nil (:mode (next-state {:state :pvp-menu} nil)))))
 
   (describe "medium difficulty menu"
     (it "displays size options"
@@ -99,7 +106,14 @@
       (should= :4x4-game (:state (next-state {:state :med-menu} "2"))))
 
     (it "displays menu again with bad input"
-      (should= :med-menu (:state (next-state {:state :med-menu} nil)))))
+      (should= :med-menu (:state (next-state {:state :med-menu} nil))))
+
+    (it "records chosen hard mode"
+      (should= :med (:mode (next-state {:state :med-menu} "1")))
+      (should= :med (:mode (next-state {:state :med-menu} "2"))))
+
+    (it "does not record game mode with bad input"
+      (should-be-nil (:mode (next-state {:state :med-menu} nil)))))
 
   (describe "easy difficulty menu"
     (it "displays size options"
@@ -113,4 +127,11 @@
       (should= :4x4-game (:state (next-state {:state :easy-menu} "2"))))
 
     (it "displays menu again with bad input"
-      (should= :easy-menu (:state (next-state {:state :easy-menu} nil))))))
+      (should= :easy-menu (:state (next-state {:state :easy-menu} nil))))
+
+    (it "records chosen hard mode"
+      (should= :easy (:mode (next-state {:state :easy-menu} "1")))
+      (should= :easy (:mode (next-state {:state :easy-menu} "2"))))
+
+    (it "does not record game mode with bad input"
+      (should-be-nil (:mode (next-state {:state :easy-menu} nil))))))
