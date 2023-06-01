@@ -8,15 +8,16 @@
 (defmethod render :mode-menu [state]
   (println "1) Player v. Player\n2) Player v. Computer\n3) Computer v. Computer"))
 
+(defn select-opt [options selection default-state]
+  (let [opt-map (->> (map #(hash-map :state %) options)
+                  (map-indexed (fn [idx opt] {(inc idx) opt}))
+                  (into (sorted-map)))]
+    (get opt-map selection default-state)))
+
 (defmulti next-state :state)
 
 (defmethod next-state :main-menu [state selection]
-  (get {1 {:state :mode-menu}
-        2 {:state :replay-menu}}
-    selection state))
+  (select-opt [:mode-menu :replay-menu] selection state))
 
 (defmethod next-state :mode-menu [state selection]
-  (get {1 {:state :pvp-menu}
-        2 {:state :pvc-menu}
-        3 {:state :cvc-menu}}
-    selection state))
+  (select-opt [:pvp-menu :pvc-menu :cvc-menu] selection state))
