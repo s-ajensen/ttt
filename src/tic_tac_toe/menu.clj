@@ -1,26 +1,29 @@
 (ns tic-tac-toe.menu)
 
-(defmulti render :state)
-
-(defmethod render :main-menu [state]
-  (println "1) New Game\n2) Replay Game"))
-
-(defmethod render :mode-menu [state]
-  (println "1) Player v. Player\n2) Player v. Computer\n3) Computer v. Player\n4) Computer v. Computer"))
-
 (def menus
-  {:main-menu {:opts [:mode-menu :replay-menu]}
-   :mode-menu {:opts [:pvp-menu :pvc-menu :cvp-menu :cvc-menu]}})
+  {:main-menu {:opts [{:link :mode-menu   :label "New Game"}
+                      {:link :replay-menu :label "Replay Game"}]}
+   :mode-menu {:opts [{:link :pvp-menu    :label "Player v. Player"}
+                      {:link :pvc-menu    :label "Player v. Computer"}
+                      {:link :cvp-menu    :label "Computer v. Player"}
+                      {:link :cvc-menu    :label "Computer v. Computer"}]}})
 
 (defn inc-idx [coll]
   (->> (for [idx (range (count coll))] {(inc idx) (get coll idx)})
     (into (sorted-map))))
 
-(defn get-opt [cur-menu selection]
+(defn opts-idx [cur-menu]
   (let [cur-state (:state cur-menu)
-        opts      (:opts (cur-state menus))
-        opts-idx  (inc-idx opts)]
-    (get opts-idx selection (:state cur-menu))))
+        opts      (:opts (cur-state menus))]
+    (inc-idx opts)))
+
+(defn get-opt [cur-menu selection]
+  (let [def-link  {:link (:state cur-menu)}]
+    (get (opts-idx cur-menu) selection def-link)))
+
+(defn render [cur-menu]
+  (doseq [opt (opts-idx cur-menu)]
+    (println (str (key opt) ") " (:label (val opt))))))
 
 (defn next-state [state selection]
-  {:state (get-opt state selection)})
+  {:state (:link (get-opt state selection))})
