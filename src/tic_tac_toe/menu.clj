@@ -3,10 +3,12 @@
 (def menus
   {:main-menu {:opts [{:link :mode-menu   :label "New Game"}
                       {:link :replay-menu :label "Replay Game"}]}
-   :mode-menu {:opts [{:link :pvp-menu    :label "Player v. Player"}
-                      {:link :pvc-menu    :label "Player v. Computer"}
-                      {:link :cvp-menu    :label "Computer v. Player"}
-                      {:link :cvc-menu    :label "Computer v. Computer"}]}})
+   :mode-menu {:opts [{:link :pvp-menu    :label "Player v. Player"         :attribs {:mode :pvp}}
+                      {:link :pvc-menu    :label "Player v. Computer"       :attribs {:mode :pvc}}
+                      {:link :cvp-menu    :label "Computer v. Player"       :attribs {:mode :cvp}}
+                      {:link :cvc-menu    :label "Computer v. Computer"     :attribs {:mode :cvc}}]}
+   :pvp-menu  {:opts [{:link :pvp-game    :label "3x3"                      :attribs {:size :3x3}}
+                      {:link :pvp-game    :label "4x4"                      :attribs {:size :4x4}}]}})
 
 (defn inc-idx [coll]
   (->> (for [idx (range (count coll))] {(inc idx) (get coll idx)})
@@ -26,4 +28,6 @@
     (println (str (key opt) ") " (:label (val opt))))))
 
 (defn next-state [state selection]
-  {:state (:link (get-opt state selection))})
+  (let [opt (get-opt state selection)]
+    (->> (assoc state :state (:link opt))
+      (merge (:attribs opt)))))
