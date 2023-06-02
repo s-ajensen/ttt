@@ -1,17 +1,34 @@
 (ns tic-tac-toe.menu)
 
+(def main-opts
+  {:opts [{:link :mode-menu   :label "New Game"}
+          {:link :replay-menu :label "Replay Game"}]})
+
+(def difficulty-opts
+  {:opts [{:link :hard-menu   :label "Hard (Unbeatable)"        :attribs {:difficulty :hard}}
+          {:link :med-menu    :label "Medium"                   :attribs {:difficulty :med}}
+          {:link :easy-menu   :label "Easy"                     :attribs {:difficulty :easy}}]})
+
+(def size-opts
+  {:opts [{:link :new-game    :label "3x3"                      :attribs {:size :3x3}}
+          {:link :new-game    :label "4x4"                      :attribs {:size :4x4}}]})
+
+(def mode-opts
+  {:opts [{:link :pvp-menu    :label "Player v. Player"         :attribs {:mode :pvp}}
+          {:link :pvc-menu    :label "Player v. Computer"       :attribs {:mode :pvc}}
+          {:link :cvp-menu    :label "Computer v. Player"       :attribs {:mode :cvp}}
+          {:link :cvc-menu    :label "Computer v. Computer"     :attribs {:mode :cvc}}]})
+
 (def menus
-  {:main-menu {:opts [{:link :mode-menu   :label "New Game"}
-                      {:link :replay-menu :label "Replay Game"}]}
-   :mode-menu {:opts [{:link :pvp-menu    :label "Player v. Player"         :attribs {:mode :pvp}}
-                      {:link :pvc-menu    :label "Player v. Computer"       :attribs {:mode :pvc}}
-                      {:link :cvp-menu    :label "Computer v. Player"       :attribs {:mode :cvp}}
-                      {:link :cvc-menu    :label "Computer v. Computer"     :attribs {:mode :cvc}}]}
-   :pvp-menu  {:opts [{:link :pvp-game    :label "3x3"                      :attribs {:size :3x3}}
-                      {:link :pvp-game    :label "4x4"                      :attribs {:size :4x4}}]}
-   :pvc-menu  {:opts [{:link :hard-menu   :label "Hard (Unbeatable)"        :attribs {:difficulty :hard}}
-                      {:link :med-menu    :label "Medium"                   :attribs {:difficulty :med}}
-                      {:link :easy-menu   :label "Easy"                     :attribs {:difficulty :easy}}]}})
+  {:main-menu main-opts
+   :mode-menu mode-opts
+   :pvp-menu  size-opts
+   :pvc-menu  difficulty-opts
+   :cvp-menu  difficulty-opts
+   :cvc-menu  difficulty-opts
+   :hard-menu size-opts
+   :med-menu  size-opts
+   :easy-menu size-opts})
 
 (defn inc-idx [coll]
   (->> (for [idx (range (count coll))] {(inc idx) (get coll idx)})
