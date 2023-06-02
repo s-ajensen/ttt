@@ -8,8 +8,6 @@
 (defmethod render :mode-menu [state]
   (println "1) Player v. Player\n2) Player v. Computer\n3) Computer v. Player\n4) Computer v. Computer"))
 
-(defmulti next-state :state)
-
 (def menus
   {:main-menu {:opts [:mode-menu :replay-menu]}
    :mode-menu {:opts [:pvp-menu :pvc-menu :cvp-menu :cvc-menu]}})
@@ -24,8 +22,5 @@
         opts-idx  (inc-idx opts)]
     (get opts-idx selection (:state cur-menu))))
 
-(defmethod next-state :main-menu [state selection]
-  {:state (get-opt state selection)})
-
-(defmethod next-state :mode-menu [state selection]
+(defn next-state [state selection]
   {:state (get-opt state selection)})
