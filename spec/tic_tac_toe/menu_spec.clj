@@ -19,7 +19,7 @@
 
   (describe "mode menu"
     (it "displays game modes"
-      (should= "1) Player v. Player\n2) Player v. Computer\n3) Computer v. Computer\n"
+      (should= "1) Player v. Player\n2) Player v. Computer\n3) Computer v. Player\n4) Computer v. Computer\n"
         (with-out-str (render {:state :mode-menu}))))
 
     (it "selects pvp game"
@@ -28,8 +28,11 @@
     (it "selects pvc game"
       (should= :pvc-menu (:state (next-state {:state :mode-menu} 2))))
 
+    (it "selects cvp game"
+      (should= :cvp-menu (:state (next-state {:state :mode-menu} 3))))
+
     (it "selects cvc game"
-      (should= :cvc-menu (:state (next-state {:state :mode-menu} 3))))
+      (should= :cvc-menu (:state (next-state {:state :mode-menu} 4))))
 
     (it "displays menu again with bad input"
       (should= :mode-menu (:state (next-state {:state :mode-menu} nil))))))
