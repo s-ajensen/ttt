@@ -8,7 +8,10 @@
                       {:link :cvp-menu    :label "Computer v. Player"       :attribs {:mode :cvp}}
                       {:link :cvc-menu    :label "Computer v. Computer"     :attribs {:mode :cvc}}]}
    :pvp-menu  {:opts [{:link :pvp-game    :label "3x3"                      :attribs {:size :3x3}}
-                      {:link :pvp-game    :label "4x4"                      :attribs {:size :4x4}}]}})
+                      {:link :pvp-game    :label "4x4"                      :attribs {:size :4x4}}]}
+   :pvc-menu  {:opts [{:link :hard-menu   :label "Hard (Unbeatable)"        :attribs {:difficulty :hard}}
+                      {:link :med-menu    :label "Medium"                   :attribs {:difficulty :med}}
+                      {:link :easy-menu   :label "Easy"                     :attribs {:difficulty :easy}}]}})
 
 (defn inc-idx [coll]
   (->> (for [idx (range (count coll))] {(inc idx) (get coll idx)})

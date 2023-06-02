@@ -60,4 +60,24 @@
     (it "selects 4x4 option"
       (let [x4 (next-state {:state :pvp-menu} 2)]
         (should= :pvp-game (:state x4))
-        (should= :4x4 (:size x4))))))
+        (should= :4x4 (:size x4)))))
+
+  (describe "pvc menu"
+    (it "displays difficulty options"
+      (should= "1) Hard (Unbeatable)\n2) Medium\n3) Easy\n"
+        (with-out-str (render {:state :pvc-menu}))))
+
+    (it "selects hard game"
+      (let [hard (next-state {:state :pvc-menu} 1)]
+        (should= :hard-menu (:state hard))
+        (should= :hard (:difficulty hard))))
+
+    (it "selects medium game"
+      (let [med (next-state {:state :pvc-menu} 2)]
+        (should= :med-menu (:state med))
+        (should= :med (:difficulty med))))
+
+    (it "selects easy game"
+      (let [easy (next-state {:state :pvc-menu} 3)]
+        (should= :easy-menu (:state easy))
+        (should= :easy (:difficulty easy))))))
