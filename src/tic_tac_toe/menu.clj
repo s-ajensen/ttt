@@ -51,3 +51,11 @@
   (let [opt (get-opt state selection)]
     (->> (assoc state :state (:link opt))
       (merge (:attribs opt)))))
+
+(defn menu-loop []
+  (loop [state {:state :main-menu}]
+    (println state)
+    (render state)
+    (flush)
+    (let [input (Integer/parseInt (read-line))]
+      (recur (next-state state input)))))

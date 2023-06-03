@@ -165,4 +165,7 @@
     (it "selects easy game"
       (let [easy (next-state {:state :cvc-menu} 3)]
         (should= :easy-menu (:state easy))
-        (should= :easy (:difficulty easy))))))
+        (should= :easy (:difficulty easy)))))
+
+  #_(it "displays current game state"
+    ))
