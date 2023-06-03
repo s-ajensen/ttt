@@ -8,21 +8,12 @@
         :4x4 (new-game (repeat 16 nil))}
     (:size state)))
 
-(defmulti build-game :mode)
-
-(defmethod build-game :pvp [state]
-  (build-board state))
-
-(defmethod build-game :pvc [state]
-  (build-board state))
-
-(defmethod build-game :cvp [state]
-  (->> (build-board state)
-    (move 0 \X)))
-
-(defmethod build-game :cvc [state]
-  (->> (build-board state)
-    (move 0 \X)))
+(defn build-game [state]
+  (let [board (build-board state)
+        mode  (:mode state)]
+    (if (or (= :cvp mode) (= :cvc mode))
+      (move 0 \X board)
+      board)))
 
 (defn parse-input [in]
   (try (Integer/parseInt in)
