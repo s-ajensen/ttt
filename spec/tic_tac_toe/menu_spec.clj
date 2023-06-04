@@ -1,6 +1,8 @@
 (ns tic-tac-toe.menu-spec
   (:require [speclj.core :refer :all]
-            [tic-tac-toe.menu :refer :all]))
+            [tic-tac-toe.util :refer :all]
+            [tic-tac-toe.menu :refer :all]
+            [tic-tac-toe.game :refer :all]))
 
 (describe "console interface"
   (describe "main menu"
@@ -167,5 +169,24 @@
         (should= :easy-menu (:state easy))
         (should= :easy (:difficulty easy)))))
 
-  #_(it "displays current game state"
-    ))
+  (describe "new game menu"
+    (it "builds new 3x3 game"
+      (should= (new-game)
+        (:state (next-state {:state :new-game :mode :pvp :size :3x3} 1))))
+
+    (it "builds new 4x4 game"
+      (should= (new-game (repeat 16 nil))
+        (:state (next-state {:state :new-game :mode :pvp :size :4x4} 2)))))
+
+  (describe "game view"
+    (it "displays current game state"
+      (should= (as-string (new-game)) (with-out-str (render {:state (new-game)}))))
+
+    (it "transfers control to next game state"
+      (let [game {:state (new-game) :mode :pvp :size :3x3}]
+        (should= (assoc game :state (progress-game game 0))
+          (next-state game 0))))
+
+    (it "displays game state again if space is occupied"
+      (let [game {:state (new-game \X (repeat 8 nil)) :mode :pvp :size :3x3}]
+        (should= game (next-state game 0))))))

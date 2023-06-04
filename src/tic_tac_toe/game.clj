@@ -1,6 +1,5 @@
 (ns tic-tac-toe.game
-  (:require [tic-tac-toe.menu :refer :all]
-            [tic-tac-toe.move :refer [move]]
+  (:require [tic-tac-toe.move :refer :all]
             [tic-tac-toe.util :refer [new-game]]))
 
 (defn build-board [state]
@@ -15,13 +14,20 @@
       (move 0 \X board)
       board)))
 
-(defn parse-input [in]
-  (try (Integer/parseInt in)
-    (catch NumberFormatException _ nil)))
+(defmulti progress-game :mode)
 
-(defn game-loop [state]
-  (render state)
-  (flush)
-  (let [input (read-line)]
-    (if (not= "q" input)
-      (game-loop (next-state state (parse-input input))))))
+(defmethod progress-game :pvp [state selection]
+  (let [board (:state state)]
+    (move selection (cur-token board) board)))
+
+(defn progress-ai [state selection]
+  (let [board (:state state)]
+    (->> (move selection (cur-token board) board)
+      (next-move (:difficulty state)))))
+
+(defmethod progress-game :pvc [state selection]
+  (progress-ai state selection))
+
+(defmethod progress-game :cvp [state selection]
+  (progress-ai state selection))
+

@@ -1,4 +1,7 @@
-(ns tic-tac-toe.menu)
+(ns tic-tac-toe.menu
+  (:require [tic-tac-toe.util :refer :all]
+            [tic-tac-toe.game :refer [build-game progress-game]])
+  (:import (clojure.lang ExceptionInfo)))
 
 (def main-opts
   {:opts [{:link :mode-menu   :label "New Game"}
@@ -43,19 +46,34 @@
   (let [def-link  {:link (:state cur-menu)}]
     (get (opts-idx cur-menu) selection def-link)))
 
-(defn render [cur-menu]
+(defmulti render (fn [state]
+                   (if (contains? menus (:state state))
+                     :menu
+                     :game)))
+
+(defmethod render :menu [cur-menu]
   (doseq [opt (opts-idx cur-menu)]
     (println (str (key opt) ") " (:label (val opt))))))
 
-(defn next-state [state selection]
+(defmethod render :game [cur-state]
+  (if (not= :new-game (:state cur-state))
+    (print (as-string (:state cur-state)))))
+
+(defmulti next-state (fn [state selection]
+                       (cond
+                         (contains? menus (:state state)) :menu
+                         (= :new-game (:state state))     :new-game
+                         :else                            :game)))
+
+(defmethod next-state :menu [state selection]
   (let [opt (get-opt state selection)]
     (->> (assoc state :state (:link opt))
       (merge (:attribs opt)))))
 
-(defn menu-loop []
-  (loop [state {:state :main-menu}]
-    (println state)
-    (render state)
-    (flush)
-    (let [input (Integer/parseInt (read-line))]
-      (recur (next-state state input)))))
+(defmethod next-state :new-game [state selection]
+  (assoc state :state (build-game state)))
+
+(defmethod next-state :game [state selection]
+  (try
+    (assoc state :state (progress-game state selection))
+    (catch ExceptionInfo _ state)))
