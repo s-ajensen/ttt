@@ -1,5 +1,6 @@
 {
-  "destination": "memory",
+  "destination": "edn",
+  "edn-file": "db.txt",
   "dbtype": "sqlite",
   "dbname": "db/tic-tac-toe.db"
 }

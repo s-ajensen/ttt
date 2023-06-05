@@ -2,7 +2,18 @@
   (:require [speclj.core :refer :all]
             [tic-tac-toe.util :refer :all]
             [tic-tac-toe.menu :refer :all]
-            [tic-tac-toe.game :refer :all]))
+            [tic-tac-toe.game :refer :all]
+            [tic-tac-toe.repo :refer :all]))
+
+(def finished-game
+  {1685961342592
+   '({:state [\X \O \X \O \X \O \X nil nil], :mode :pvp, :over? true, :start_time 1685961342592, :created_on 1685962997751}
+     {:state [\X \O \X \O \X \O nil nil nil], :mode :pvp, :over? true, :start_time 1685961342592, :created_on 1685962997751}
+     {:state [\X \O \X \O \X nil nil nil nil], :mode :pvp, :over? true, :start_time 1685961342592, :created_on 1685962997751}
+     {:state [\X \O \X \O nil nil nil nil nil], :mode :pvp, :over? true, :start_time 1685961342592, :created_on 1685962997751}
+     {:state [\X \O \X nil nil nil nil nil nil], :mode :pvp, :over? true, :start_time 1685961342592, :created_on 1685962997750}
+     {:state [\X \O nil nil nil nil nil nil nil], :mode :pvp, :over? true, :start_time 1685961342592, :created_on 1685962997750}
+     {:state [\X nil nil nil nil nil nil nil nil], :mode :pvp, :over? true, :start_time 1685961342592, :created_on 1685962997750})})
 
 (describe "console interface"
   (describe "main menu"
@@ -18,6 +29,11 @@
 
     (it "displays menu again with bad input"
       (should= :main-menu (:state (next-state {:state :main-menu} nil)))))
+
+  (describe "main menu w/ continue option"
+    (it "displays continue option with other main menu links"
+      (should= "1) Continue\n2) New Game\n3) Replay Game\n"
+        (with-out-str (render {:state :main-menu-cont})))))
 
   (describe "mode menu"
     (it "displays game modes"
@@ -177,6 +193,27 @@
     (it "builds new 4x4 game"
       (should= (new-game (repeat 16 nil))
         (:state (next-state {:state :new-game :mode :pvp :size :4x4} 2)))))
+
+  (describe "continue game menu"
+    (before (swap! memory-store {:moves {}}))
+
+    (it "transfers control to game in progress"
+      (let [in-progress {:state (new-game) :mode :pvp :over? false}]
+        (save-state! in-progress)
+        (should= (first (val (first (:moves @memory-store)))) (next-state {:state :cont-game} nil))))
+
+    (it "sets time to start time of game in progress"
+      (let [in-progress {:state (new-game) :mode :pvp :over? false}]
+        (save-state! in-progress)
+        (should= (.getTime start-time) (:start_time (first (val (first (:moves @memory-store)))))))))
+
+  (describe "replay game menu"
+    (with-stubs)
+
+    (it "formats finished games"
+      (with-redefs [get-db-config (stub :mock-db-config {:return {:destination "memory"}})]
+        (swap! memory-store assoc :moves finished-game)
+        (should= "(1) pvp - Mon Jun 05 06:35:42 EDT 2023)\n" (with-out-str (render {:state :replay-menu}))))))
 
   (describe "game view"
     (it "displays current game state"

@@ -3,10 +3,16 @@
             [tic-tac-toe.move :refer [game-over?]]
             [tic-tac-toe.game :refer [build-game progress-game]]
             [tic-tac-toe.repo :refer :all])
-  (:import (clojure.lang ExceptionInfo)))
+  (:import (clojure.lang ExceptionInfo)
+           (java.util Date)))
 
 (def main-opts
   {:opts [{:link :mode-menu   :label "New Game"}
+          {:link :replay-menu :label "Replay Game"}]})
+
+(def main-cont-opts
+  {:opts [{:link :cont-game   :label "Continue"}
+          {:link :mode-menu   :label "New Game"}
           {:link :replay-menu :label "Replay Game"}]})
 
 (def difficulty-opts
@@ -26,6 +32,7 @@
 
 (def menus
   {:main-menu main-opts
+   :main-menu-cont main-cont-opts
    :mode-menu mode-opts
    :pvp-menu  size-opts
    :pvc-menu  difficulty-opts
@@ -49,22 +56,40 @@
     (get (opts-idx cur-menu) selection def-link)))
 
 (defmulti render (fn [state]
-                   (if (contains? menus (:state state))
-                     :menu
-                     :game)))
+                   (cond
+                     (contains? menus (:state state)) :menu
+                     (= :cont-game (:state state)) :cont-game
+                     (= :replay-menu (:state state)) :replay-menu
+                     :else :game)))
 
 (defmethod render :menu [cur-menu]
   (doseq [opt (opts-idx cur-menu)]
     (println (str (key opt) ") " (:label (val opt))))))
 
+(defmethod render :cont-game [cur-menu])
+
 (defmethod render :game [cur-state]
   (if (not= :new-game (:state cur-state))
     (print (as-string (:state cur-state)))))
+
+(defn fmt-replay [start-time moves]
+  (let [date (Date.)
+        mode (name (:mode (first moves)))]
+    (.setTime date start-time)
+    (str mode " - " date)))
+
+(defmethod render :replay-menu [state]
+  (let [finished (get-finished-games)]
+    (->> (map #(fmt-replay (key %) (val %)) finished)
+      (map-indexed (fn [idx itm] [(str (inc idx) ")") itm]))
+      flatten
+      println)))
 
 (defmulti next-state (fn [state selection]
                        (cond
                          (contains? menus (:state state)) :menu
                          (= :new-game (:state state))     :new-game
+                         (= :cont-game (:state state))    :cont-game
                          :else                            :game)))
 
 (defmethod next-state :menu [state selection]
@@ -74,6 +99,12 @@
 
 (defmethod next-state :new-game [state selection]
   (assoc state :state (build-game state)))
+
+(defmethod next-state :cont-game [state selection]
+  (let [open-game (get-open-game)]
+    (.setTime start-time (:start_time open-game))
+    (println open-game)
+    open-game))
 
 (defmethod next-state :game [state selection]
   (if (game-over? (:state state))

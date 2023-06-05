@@ -16,20 +16,23 @@
 
 (defn fmt-state [state]
   (-> (assoc state :over? (game-over? (:state state)))
+    (assoc :start_time (.getTime start-time))
     (assoc :created_on (.getTime (Date.)))))
 
 (defn save-state! [state]
-  (let [cur-moves (get (:moves @memory-store) start-time)
+  (let [cur-moves (get (:moves @memory-store) (.getTime start-time))
         config (get-db-config)
         over? (game-over? (:state state))
         new-moves (map #(assoc % :over? over?) (conj cur-moves (fmt-state state)))]
-    (swap! memory-store assoc-in [:moves start-time] new-moves)
+    (swap! memory-store assoc-in [:moves (.getTime start-time)] new-moves)
     (cond
       (= "edn" (:destination config)) (spit (:edn-file config) @memory-store))))
 
 (defn deserialize [file]
-  (-> (slurp file)
-    (read-string)))
+  (try
+    (-> (slurp file)
+      (read-string))
+    (catch EOFException _ nil)))
 
 (defn newest-open-game [store]
   (->> (:moves store)
@@ -42,6 +45,7 @@
 (defn get-open-game []
   (let [config (get-db-config)]
     (cond
+      (= "memory" (:destination config)) (newest-open-game @memory-store)
       (= "edn" (:destination config)) (newest-open-game (deserialize (:edn-file config))))))
 
 (defn finished? [game]
@@ -55,4 +59,5 @@
 (defn get-finished-games []
   (let [config (get-db-config)]
     (cond
+      (= "memory" (:destination config)) (finished-games @memory-store)
       (= "edn" (:destination config)) (finished-games (deserialize (:edn-file config))))))
