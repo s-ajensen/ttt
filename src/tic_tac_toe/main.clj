@@ -9,9 +9,11 @@
   (println state)
   (render state)
   (flush)
-  (let [input (read-line)]
-    (if (not= "q" input)
-      (game-loop (next-state state (parse-input input))))))
+  (if (nil? (:state state))
+    (println "Game Over!")
+    (let [input (read-line)]
+      (if (not= "q" input)
+        (game-loop (next-state state (parse-input input)))))))
 
 (defn -main
   [& args]

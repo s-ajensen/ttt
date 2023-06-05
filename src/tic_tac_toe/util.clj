@@ -1,4 +1,7 @@
-(ns tic-tac-toe.util)
+(ns tic-tac-toe.util
+  (:import (java.util Date)))
+
+(def start-time (.getTime (Date.)))
 
 (defn new-game
   ([] (vec (repeat 9 nil)))

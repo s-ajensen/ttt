@@ -189,4 +189,8 @@
 
     (it "displays game state again if space is occupied"
       (let [game {:state (new-game \X (repeat 8 nil)) :mode :pvp :size :3x3}]
-        (should= game (next-state game 0))))))
+        (should= game (next-state game 0))))
+
+    (it "does not progress game which is over"
+      (let [game {:state [\X \X \X \O \O nil nil nil nil] :mode :pvp :size :3x3}]
+        (should-be-nil (next-state game 2))))))

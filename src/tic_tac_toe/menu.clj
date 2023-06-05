@@ -1,6 +1,8 @@
 (ns tic-tac-toe.menu
   (:require [tic-tac-toe.util :refer :all]
-            [tic-tac-toe.game :refer [build-game progress-game]])
+            [tic-tac-toe.move :refer [game-over?]]
+            [tic-tac-toe.game :refer [build-game progress-game]]
+            [tic-tac-toe.repo :refer :all])
   (:import (clojure.lang ExceptionInfo)))
 
 (def main-opts
@@ -74,6 +76,10 @@
   (assoc state :state (build-game state)))
 
 (defmethod next-state :game [state selection]
-  (try
-    (assoc state :state (progress-game state selection))
-    (catch ExceptionInfo _ state)))
+  (if (game-over? (:state state))
+    nil
+    (try
+      (let [new-state (assoc state :state (progress-game state selection))]
+        (save-state! new-state)
+        new-state)
+      (catch ExceptionInfo _ state))))

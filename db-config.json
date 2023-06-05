@@ -1,0 +1,5 @@
+{
+  "destination": "memory",
+  "dbtype": "sqlite",
+  "dbname": "db/tic-tac-toe.db"
+}

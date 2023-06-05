@@ -11,9 +11,6 @@
               (str "tile " n "is already occupied!")
               {:data (str board)})))))
 
-(defn even-moves? [board]
-  (= 1 (rem (count (filter nil? board)) 2)))
-
 (defn cur-token [board]
   (let [x (count (filter #(= \X %) board))
         y (count (filter #(= \O %) board))]
