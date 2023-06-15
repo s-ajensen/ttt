@@ -5,34 +5,40 @@
   (:import (java.io EOFException)
            (java.util Date)))
 
-(def config-file "db-config.json")
+(def config-file "db-config.edn")
 (def memory-store (atom {:moves {}}))
 
 (defn get-db-config []
-  (try
-    (json/read-str (slurp config-file) :key-fn keyword)
-    (catch EOFException e
-      (throw (ex-info (str config-file " must be valid JSON!") {} e)))))
+  (read-string (slurp config-file)))
+
+(defmulti save-state! (fn [state] (:destination (get-db-config))))
+(defmulti get-open-game (fn [& args] (:destination (get-db-config))))
+(defmulti get-finished-games (fn [& args] (:destination (get-db-config))))
 
 (defn fmt-state [state]
   (-> (assoc state :over? (game-over? (:state state)))
     (assoc :start_time (.getTime start-time))
     (assoc :created_on (.getTime (Date.)))))
 
-(defn save-state! [state]
-  (let [cur-moves (get (:moves @memory-store) (.getTime start-time))
-        config (get-db-config)
-        over? (game-over? (:state state))
-        new-moves (map #(assoc % :over? over?) (conj cur-moves (fmt-state state)))]
-    (swap! memory-store assoc-in [:moves (.getTime start-time)] new-moves)
-    (cond
-      (= "edn" (:destination config)) (spit (:edn-file config) @memory-store))))
+(defn get-cur-session-moves []
+  (get (:moves @memory-store) (.getTime start-time) []))
 
-(defn deserialize [file]
-  (try
-    (-> (slurp file)
-      (read-string))
-    (catch EOFException _ nil)))
+(defn read-edn-file []
+  (read-string {:eof {:moves {}}} (slurp (:edn-file (get-db-config)))))
+
+(defn save-to-memory! [state]
+  (let [over? (game-over? (:state state))
+        cur-moves (map #(assoc % :over? over?) (get-cur-session-moves))
+        new-moves (conj cur-moves (fmt-state state))]
+    (swap! memory-store assoc-in [:moves (.getTime start-time)] new-moves)))
+
+(defmethod save-state! :memory [state]
+  (save-to-memory! state))
+
+(defmethod save-state! :edn [state]
+  (swap! memory-store assoc :moves (:moves (read-edn-file)))
+  (save-to-memory! state)
+  (spit (:edn-file (get-db-config)) @memory-store))
 
 (defn newest-open-game [store]
   (->> (:moves store)
@@ -42,11 +48,11 @@
     (sort-by :created_on)
     (last)))
 
-(defn get-open-game []
-  (let [config (get-db-config)]
-    (cond
-      (= "memory" (:destination config)) (newest-open-game @memory-store)
-      (= "edn" (:destination config)) (newest-open-game (deserialize (:edn-file config))))))
+(defmethod get-open-game :memory [& args]
+  (newest-open-game @memory-store))
+
+(defmethod get-open-game :edn [& args]
+  (newest-open-game (read-edn-file)))
 
 (defn finished? [game]
   (some? (filter :over? (val game))))
@@ -56,8 +62,8 @@
     (filter finished?)
     (into (sorted-map))))
 
-(defn get-finished-games []
-  (let [config (get-db-config)]
-    (cond
-      (= "memory" (:destination config)) (finished-games @memory-store)
-      (= "edn" (:destination config)) (finished-games (deserialize (:edn-file config))))))
+(defmethod get-finished-games :memory [& args]
+  (finished-games @memory-store))
+
+(defmethod get-finished-games :edn [& args]
+  (finished-games (read-edn-file)))

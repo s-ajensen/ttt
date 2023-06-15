@@ -48,7 +48,6 @@
 
 (defn state-type [state]
   (let [type (:state state)]
-    (println type)
     (cond
       (contains? menus type) :menu
       (some #(= type %) game-selectors) type
@@ -96,7 +95,7 @@
     (if (some? selected)
       (try
         (let [new-state (assoc state :state (progress-game state idx))]
-          (save-state! new-state)
+          #_(save-state! new-state)
           new-state)
         (catch ExceptionInfo _ state))
       state)))
