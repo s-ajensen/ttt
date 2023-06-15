@@ -1,6 +1,9 @@
 (ns tic-tac-toe.main
   (:require [tic-tac-toe.menu :refer :all]
-            [tic-tac-toe.repo :refer :all]))
+            [tic-tac-toe.repo :refer :all]
+            [tic-tac-toe.ui :as v]
+            [quil.core :as q]
+            [quil.middleware :as m]))
 
 (defn parse-input [in]
   (try (Integer/parseInt in)
@@ -21,6 +24,15 @@
       {:state :main-menu-cont}
       {:state :main-menu})))
 
+(declare ttt)
+
 (defn -main
   [& args]
-  (game-loop (start-menu)))
+  (if args
+    (q/defsketch ttt
+      :size (v/get-size)
+      :setup v/setup
+      :update v/update-state
+      :draw v/draw
+      :middleware [m/fun-mode])
+    (game-loop (start-menu))))

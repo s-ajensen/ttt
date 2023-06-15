@@ -18,7 +18,8 @@
   (describe "main menu selector"
     (before (swap! memory-store {:moves {}}))
     (it "selects normal main menu with no open games"
-      (should= {:state :main-menu} (start-menu)))
+      (with-redefs [get-db-config (stub :mock-db-config {:return {:destination "memory"}})]
+        (should= {:state :main-menu} (start-menu))))
 
     (with-stubs)
     (it "selects continue menu with an open game "
