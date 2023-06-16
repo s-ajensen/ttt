@@ -1,10 +1,10 @@
-(ns tic-tac-toe.menu-spec
+(ns ttt.menu-spec
   (:require [speclj.core :refer :all]
-            [tic-tac-toe.util :refer :all]
-            [tic-tac-toe.menu :refer :all]
-            [tic-tac-toe.game :refer :all]
-            [tic-tac-toe.repo :refer :all]
-            [tic-tac-toe.move :refer :all]))
+            [ttt.util :refer :all]
+            [ttt.menu :refer :all]
+            [ttt.game :refer :all]
+            [ttt.repo :refer :all]
+            [ttt.move :refer :all]))
 
 (def finished-game
   {1685961342592

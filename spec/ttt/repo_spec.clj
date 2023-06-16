@@ -1,9 +1,12 @@
-(ns tic-tac-toe.repo-spec
-  (:require [speclj.core :refer :all]
-            [tic-tac-toe.repo :refer :all]
-            [tic-tac-toe.menu :refer :all]
-            [tic-tac-toe.util :refer :all]
-            [tic-tac-toe.move :refer :all])
+(ns ttt.repo-spec
+  (:require [clojure.java.jdbc :as jdbc]
+            [clojure.set :as set]
+            [clojure.java.jdbc :as j]
+            [speclj.core :refer :all]
+            [ttt.repo :refer :all]
+            [ttt.menu :refer :all]
+            [ttt.util :refer :all]
+            [ttt.move :refer :all])
   (:import (clojure.lang ExceptionInfo)))
 
 (def test-file "test-store.edn")
@@ -81,7 +84,13 @@
       (should (every? :over? (get-cur-session-moves))))
 
     (it "gets the most recent open game"
-      ))
+      (let [state {:state (new-game)}]
+        (save-state! state)
+        (should (set/subset? (set state) (set (get-open-game))))))
+
+    (it "gets finished games"
+      (play-pvp-game)
+      (should= (:moves @memory-store) (get-finished-games))))
 
   (describe "file store"
     (with-stubs)
@@ -114,4 +123,25 @@
         (save-state! state2)
         (let [deserialized-moves (map set (flatten (vals (:moves (read-string (slurp test-file))))))]
           (should (some #(clojure.set/subset? (set state1) %) deserialized-moves))
-          (should (some #(clojure.set/subset? (set state2) %) deserialized-moves)))))))
+          (should (some #(clojure.set/subset? (set state2) %) deserialized-moves)))))
+
+    (it "gets the most recent open game"
+      (let [state {:state (new-game)}]
+        (save-state! state)
+        (should (set/subset? (set state) (set (get-open-game)))))))
+
+  (describe "sql data source"
+    (before (j/db-do-commands (get-db-config) false
+              (j/drop-table-ddl :moves)))
+    (with-stubs)
+    (redefs-around [get-db-config (stub :mock-db-config {:return {:destination :sqlite
+                                                                  :dbtype "sqlite"
+                                                                  :dbname "db/tic-tac-toe-spec.db"}})])
+
+    (describe "setup"
+      (it "creates moves table if nonexistent"
+        (setup!)
+        (j/with-db-metadata [md (get-db-config)]
+          (let [meta (j/metadata-result (.getTables md nil nil nil (into-array ["TABLE"])))]
+            (println meta)
+            (should (some #(= "moves" (:table_name %)) meta))))))))

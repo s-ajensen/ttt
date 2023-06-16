@@ -1,10 +1,12 @@
-(ns tic-tac-toe.main-spec
+(ns ttt.main-spec
   (:require [speclj.core :refer :all]
-            [tic-tac-toe.main :refer :all]
-            [tic-tac-toe.util :refer :all]
-            [tic-tac-toe.repo :refer :all]))
+            [ttt.main :refer :all]
+            [ttt.util :refer :all]
+            [ttt.repo :refer :all]))
 
 (describe "main loop"
+  (with-stubs)
+
   (describe "input reader"
     (it "parses number inputs to integers"
       (should= 1 (parse-input "1")))

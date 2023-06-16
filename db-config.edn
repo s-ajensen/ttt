@@ -1,3 +1,3 @@
 {:destination :edn
- :dbtype :sqlite
- :dbname "db/tic-tac-toe.db"}
+ :dbtype :edn
+ :edn-file "db.edn"}

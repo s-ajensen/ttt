@@ -1,6 +1,6 @@
-(ns tic-tac-toe.game
-  (:require [tic-tac-toe.move :refer :all]
-            [tic-tac-toe.util :refer [new-game]]))
+(ns ttt.game
+  (:require [ttt.move :refer :all]
+            [ttt.util :refer [new-game]]))
 
 (defn build-board [state]
   (get {:3x3 (new-game)

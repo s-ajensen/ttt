@@ -1,8 +1,8 @@
-(ns tic-tac-toe.ui
-  (:require [tic-tac-toe.menu :refer :all]
-            [tic-tac-toe.util :refer :all]
-            [tic-tac-toe.game :refer :all]
-            [tic-tac-toe.repo :refer :all]
+(ns ttt.ui
+  (:require [ttt.menu :refer :all]
+            [ttt.util :refer :all]
+            [ttt.game :refer :all]
+            [ttt.repo :refer :all]
             [quil.core :as q])
   (:import (clojure.lang ExceptionInfo)))
 

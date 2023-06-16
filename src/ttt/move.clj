@@ -1,7 +1,5 @@
-(ns tic-tac-toe.move)
-
-(ns tic-tac-toe.move
-  (:require [tic-tac-toe.util :refer :all]))
+(ns ttt.move
+  (:require [ttt.util :refer :all]))
 
 (defn move
   ([n t board]

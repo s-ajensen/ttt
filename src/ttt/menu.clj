@@ -1,8 +1,8 @@
-(ns tic-tac-toe.menu
-  (:require [tic-tac-toe.util :refer :all]
-            [tic-tac-toe.move :refer [game-over?]]
-            [tic-tac-toe.game :refer [build-game progress-game]]
-            [tic-tac-toe.repo :refer :all])
+(ns ttt.menu
+  (:require [ttt.util :refer :all]
+            [ttt.move :refer [game-over?]]
+            [ttt.game :refer [build-game progress-game]]
+            [ttt.repo :refer :all])
   (:import (clojure.lang ExceptionInfo)
            (java.util Date)))
 

@@ -1,9 +1,10 @@
-(ns tic-tac-toe.main
-  (:require [tic-tac-toe.menu :refer :all]
-            [tic-tac-toe.repo :refer :all]
-            [tic-tac-toe.ui :as v]
+(ns ttt.main
+  (:require [ttt.menu :refer :all]
+            [ttt.repo :refer :all]
+            [ttt.ui :as v]
             [quil.core :as q]
-            [quil.middleware :as m]))
+            [quil.middleware :as m]
+            [clojure.string :as s]))
 
 (defn parse-input [in]
   (try (Integer/parseInt in)

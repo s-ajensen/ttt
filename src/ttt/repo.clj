@@ -1,7 +1,7 @@
-(ns tic-tac-toe.repo
-  (:require [clojure.data.json :as json]
-            [tic-tac-toe.util :refer :all]
-            [tic-tac-toe.move :refer [game-over?]])
+(ns ttt.repo
+  (:require [clojure.java.jdbc :as j]
+            [ttt.util :refer :all]
+            [ttt.move :refer [game-over?]])
   (:import (java.io EOFException)
            (java.util Date)))
 
@@ -67,3 +67,8 @@
 
 (defmethod get-finished-games :edn [& args]
   (finished-games (read-edn-file)))
+
+(defn setup! []
+  (j/db-do-commands (get-db-config) false
+    (j/create-table-ddl :moves
+      [[:id :integer :primary :key "AUTOINCREMENT"]])))

@@ -1,6 +1,6 @@
-(ns tic-tac-toe.util-spec
+(ns ttt.util-spec
   (:require [speclj.core :refer :all]
-            [tic-tac-toe.util :refer :all]))
+            [ttt.util :refer :all]))
 
 (describe "tic tac toe utility functions"
   (it "generates an empty game"
@@ -26,4 +26,7 @@
       (should= (new-game \X (repeat 8 nil)) (as-board "X--\n---\n---\n")))
 
     (it "parses a populated 4x4 game"
-      (should= (new-game \X (repeat 15 nil)) (as-board "X---\n----\n----\n----\n")))))
+      (should= (new-game \X (repeat 15 nil)) (as-board "X---\n----\n----\n----\n"))))
+
+  (it "parses string to clojure map"
+    (should= {:state :main-menu} (as-map "{:state :main-menu}"))))

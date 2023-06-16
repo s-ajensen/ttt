@@ -1,9 +1,9 @@
-(ns tic-tac-toe.game-spec
+(ns ttt.game-spec
   (:require [speclj.core :refer :all]
-            [tic-tac-toe.game :refer :all]
-            [tic-tac-toe.menu :refer :all]
-            [tic-tac-toe.move :refer :all]
-            [tic-tac-toe.util :refer [new-game]]))
+            [ttt.game :refer :all]
+            [ttt.menu :refer :all]
+            [ttt.move :refer :all]
+            [ttt.util :refer [new-game]]))
 
 (def main-menu {:state :main-menu})
 (def x3-board (new-game))

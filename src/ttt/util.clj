@@ -1,4 +1,4 @@
-(ns tic-tac-toe.util
+(ns ttt.util
   (:import (java.util Date)))
 
 (def start-time (Date.))
@@ -23,3 +23,6 @@
     (reduce concat)
     (map #(if (= \- %) nil %))
     (vec)))
+
+(defn as-map [string]
+  (read-string string))

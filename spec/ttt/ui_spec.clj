@@ -1,8 +1,8 @@
-(ns tic-tac-toe.ui_spec
+(ns ttt.ui_spec
   (:require [quil.core :as q]
             [speclj.core :refer :all]
-            [tic-tac-toe.util :refer :all]
-            [tic-tac-toe.ui :refer :all]))
+            [ttt.util :refer :all]
+            [ttt.ui :refer :all]))
 
 (describe "gui"
   (with-stubs)
