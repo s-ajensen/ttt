@@ -1,0 +1,3 @@
+{:destination :edn
+ :dbtype :edn
+ :edn-file "db.edn"}

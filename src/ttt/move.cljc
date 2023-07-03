@@ -1,7 +1,5 @@
-(ns tic-tac-toe.move)
-
-(ns tic-tac-toe.move
-  (:require [tic-tac-toe.util :refer :all]))
+(ns ttt.move
+  (:require [ttt.util :refer :all]))
 
 (defn move
   ([n t board]
@@ -10,9 +8,6 @@
      (throw (ex-info
               (str "tile " n "is already occupied!")
               {:data (str board)})))))
-
-(defn even-moves? [board]
-  (= 1 (rem (count (filter nil? board)) 2)))
 
 (defn cur-token [board]
   (let [x (count (filter #(= \X %) board))

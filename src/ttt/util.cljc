@@ -1,4 +1,9 @@
-(ns tic-tac-toe.util)
+(ns ttt.util
+  (:import (java.util Date)))
+
+(def start-time
+  #?(:clj (Date.)
+     :cljs (.now js/Date)))
 
 (defn new-game
   ([] (vec (repeat 9 nil)))
@@ -20,3 +25,6 @@
     (reduce concat)
     (map #(if (= \- %) nil %))
     (vec)))
+
+(defn as-map [string]
+  (read-string string))

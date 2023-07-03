@@ -1,7 +1,7 @@
-(ns tic-tac-toe.move-spec
+(ns ttt.move-spec
   (:require [speclj.core :refer :all]
-            [tic-tac-toe.move :refer :all]
-            [tic-tac-toe.util :refer :all]))
+            [ttt.move :refer :all]
+            [ttt.util :refer :all]))
 
 (defn possible-results [boards]
   (loop [unfinished boards finished '()]
