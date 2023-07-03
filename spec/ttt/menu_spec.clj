@@ -203,12 +203,12 @@
   (describe "continue game menu"
     (before (swap! memory-store {:moves {}}))
 
-    #_(it "transfers control to game in progress"
+    (it "transfers control to game in progress"
       (let [in-progress {:state (new-game) :mode :pvp :over? false}]
         (save-state! in-progress)
         (should= (first (val (first (:moves @memory-store)))) (next-state {:state :cont-game} nil))))
 
-    #_(it "sets time to start time of game in progress"
+    (it "sets time to start time of game in progress"
       (let [in-progress {:state (new-game) :mode :pvp :over? false}]
         (save-state! in-progress)
         (should= (.getTime start-time) (:start_time (first (val (first (:moves @memory-store)))))))))

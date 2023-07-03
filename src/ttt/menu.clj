@@ -30,6 +30,24 @@
           {:link :cvp-menu    :label "Computer v. Player"       :attribs {:mode :cvp}}
           {:link :cvc-menu    :label "Computer v. Computer"     :attribs {:mode :cvc}}]})
 
+(defn fmt-replay [start-time moves]
+  (let [date (Date.)
+        mode (name (:mode (first moves)))]
+    (.setTime date start-time)
+    (str mode " - " date)))
+
+(defn create-link [label]
+  (assoc {} :link :cont-game :label label))
+
+(defn pnt [x]
+  (println x)
+  x)
+
+(defn fmt-replays []
+  (let [replays (get-finished-games)]
+    (pnt (->> (map #(fmt-replay (key %) (val %)) replays)
+      (map create-link)))))
+
 (def menus
   {:main-menu main-opts
    :main-menu-cont main-cont-opts
@@ -40,7 +58,8 @@
    :cvc-menu  difficulty-opts
    :hard-menu size-opts
    :med-menu  size-opts
-   :easy-menu size-opts})
+   :easy-menu size-opts
+   :replay-menu {:opts (fmt-replays)}})
 
 (defn inc-idx [coll]
   (->> (for [idx (range (count coll))] {(inc idx) (get coll idx)})
@@ -48,7 +67,7 @@
 
 (defn opts-idx [cur-menu]
   (let [cur-state (:state cur-menu)
-        opts      (:opts (cur-state menus))]
+        opts (:opts (cur-state menus))]
     (inc-idx opts)))
 
 (defn get-opt [cur-menu selection]
@@ -59,7 +78,6 @@
                    (cond
                      (contains? menus (:state state)) :menu
                      (= :cont-game (:state state)) :cont-game
-                     (= :replay-menu (:state state)) :replay-menu
                      :else :game)))
 
 (defmethod render :menu [cur-menu]
@@ -71,19 +89,6 @@
 (defmethod render :game [cur-state]
   (if (not= :new-game (:state cur-state))
     (print (as-string (:state cur-state)))))
-
-(defn fmt-replay [start-time moves]
-  (let [date (Date.)
-        mode (name (:mode (first moves)))]
-    (.setTime date start-time)
-    (str mode " - " date)))
-
-(defmethod render :replay-menu [state]
-  (let [finished (get-finished-games)]
-    (->> (map #(fmt-replay (key %) (val %)) finished)
-      (map-indexed (fn [idx itm] [(str (inc idx) ")") itm]))
-      flatten
-      println)))
 
 (defmulti next-state (fn [state selection]
                        (cond

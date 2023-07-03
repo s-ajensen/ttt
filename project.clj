@@ -14,4 +14,5 @@
   :profiles {:dev {:dependencies [[speclj "3.4.3"]]}}
   :plugins [[speclj "3.4.3"]]
   :test-paths ["spec"]
-  :java-cmd "/Library/Java/JavaVirtualMachines/jdk-1.8.jdk/Contents/Home/bin/java")
+  :java-cmd "/Library/Java/JavaVirtualMachines/jdk-1.8.jdk/Contents/Home/bin/java"
+  #_(:java-cmd "/Users/sajensen/Library/Java/JavaVirtualMachines/openjdk-20.0.1/Contents/Home/bin/java"))

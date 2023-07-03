@@ -69,7 +69,7 @@
 
       (it "correctly identifies game selection menus"
         (should= :cont-game (state-type {:state :cont-game}))
-        (should= :replay-menu (state-type {:state :replay-menu}))
+        (should= :menu (state-type {:state :replay-menu}))
         (should= :new-game (state-type {:state :new-game})))
 
       (it "correctly dispatches to game state"

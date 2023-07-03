@@ -1,7 +1,9 @@
 (ns ttt.util
   (:import (java.util Date)))
 
-(def start-time (Date.))
+(def start-time
+  #?(:clj (Date.)
+     :cljs (.now js/Date)))
 
 (defn new-game
   ([] (vec (repeat 9 nil)))

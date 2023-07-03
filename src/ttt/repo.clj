@@ -40,6 +40,16 @@
   (save-to-memory! state)
   (spit (:edn-file (get-db-config)) @memory-store))
 
+(defmethod save-state! :sqlite [state]
+  (j/insert! (get-db-config) :moves {:state (str (:state state))
+                                     :mode (name (:mode state))
+                                     :over (game-over? (:state state))
+                                     :size (name (:size state))
+                                     :start_time start-time
+                                     :created_on (.getTime (Date.))})
+  (if (game-over? (:state state))
+    (j/update! (get-db-config) :moves {:over 1} ["start_time = ?" start-time])))
+
 (defn newest-open-game [store]
   (->> (:moves store)
     (map val)
@@ -53,6 +63,19 @@
 
 (defmethod get-open-game :edn [& args]
   (newest-open-game (read-edn-file)))
+
+(defn deserialize-state [query-res]
+  {:state (read-string (:state query-res))
+   :mode (keyword (:mode query-res))
+   :size (keyword (:size query-res))
+   :over? (if (= 1 (:over query-res)) true false)
+   :start_time (:start_time query-res)
+   :created_on (:created_on query-res)})
+
+(defmethod get-open-game :sqlite [& args]
+  (-> (j/query (get-db-config) ["SELECT * FROM moves WHERE over = 0 ORDER BY created_on DESC"])
+    first
+    deserialize-state))
 
 (defn finished? [game]
   (some? (filter :over? (val game))))
@@ -68,7 +91,17 @@
 (defmethod get-finished-games :edn [& args]
   (finished-games (read-edn-file)))
 
+(defmethod get-finished-games :sqlite [& args]
+  (->> (j/query (get-db-config) ["SELECT * FROM moves WHERE over = 1 ORDER BY created_on DESC"])
+    (group-by :start_time)))
+
 (defn setup! []
   (j/db-do-commands (get-db-config) false
     (j/create-table-ddl :moves
-      [[:id :integer :primary :key "AUTOINCREMENT"]])))
+      [[:id         :integer :primary :key "AUTOINCREMENT"]
+       [:state      :text]
+       [:mode       :text]
+       [:over       :int]
+       [:size       :text]
+       [:start_time :int]
+       [:created_on :int]])))

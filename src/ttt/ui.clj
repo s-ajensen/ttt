@@ -95,7 +95,6 @@
     (if (some? selected)
       (try
         (let [new-state (assoc state :state (progress-game state idx))]
-          #_(save-state! new-state)
           new-state)
         (catch ExceptionInfo _ state))
       state)))

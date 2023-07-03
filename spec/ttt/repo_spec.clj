@@ -1,9 +1,9 @@
 (ns ttt.repo-spec
-  (:require [clojure.java.jdbc :as jdbc]
+  (:require [ttt.repo :refer :all]
+            [clojure.java.jdbc :as jdbc]
             [clojure.set :as set]
             [clojure.java.jdbc :as j]
             [speclj.core :refer :all]
-            [ttt.repo :refer :all]
             [ttt.menu :refer :all]
             [ttt.util :refer :all]
             [ttt.move :refer :all])
@@ -16,7 +16,7 @@
   state)
 
 (defn play-pvp-game []
-  (-> {:state (new-game) :mode :pvp}
+  (-> {:state (new-game) :mode :pvp :size :3x3}
     (next-state 0)
     (next-state 1)
     (next-state 2)
@@ -24,6 +24,16 @@
     (next-state 4)
     (next-state 5)
     (next-state 6)))
+
+(defn get-tables []
+  (j/with-db-metadata [md (get-db-config)]
+    (j/metadata-result (.getTables md nil nil nil (into-array ["TABLE"])))))
+
+(defn get-cols [tbl-name]
+  (j/with-db-metadata [m (get-db-config)]
+    (->> (.getColumns m nil nil tbl-name nil)
+      (j/metadata-query)
+      (map :column_name))))
 
 (describe "tic tac toe data repository"
   (describe "db config"
@@ -131,7 +141,7 @@
         (should (set/subset? (set state) (set (get-open-game)))))))
 
   (describe "sql data source"
-    (before (j/db-do-commands (get-db-config) false
+    (after (j/db-do-commands (get-db-config) false
               (j/drop-table-ddl :moves)))
     (with-stubs)
     (redefs-around [get-db-config (stub :mock-db-config {:return {:destination :sqlite
@@ -141,7 +151,38 @@
     (describe "setup"
       (it "creates moves table if nonexistent"
         (setup!)
-        (j/with-db-metadata [md (get-db-config)]
-          (let [meta (j/metadata-result (.getTables md nil nil nil (into-array ["TABLE"])))]
-            (println meta)
-            (should (some #(= "moves" (:table_name %)) meta))))))))
+        (let [tables (get-tables)]
+          (should (some #(= "moves" (:table_name %)) tables))))
+
+      (it "creates state column"
+        (setup!)
+        (let [cols (get-cols "moves")]
+          (should-contain "state" cols)))
+
+      (it "create metadata columns"
+        (setup!)
+        (let [cols (get-cols "moves")]
+          (should-contain "mode" cols)
+          (should-contain "over" cols)
+          (should-contain "start_time" cols)
+          (should-contain "size" cols)
+          (should-contain "created_on" cols))))
+
+    (it "saves move to database"
+      (setup!)
+      (save-state! {:state (new-game) :mode :pvp :size :3x3})
+      (should (some? (j/query (get-db-config) ["SELECT * FROM moves"]))))
+
+    (it "gets the most recent open game"
+      (let [state {:state (new-game) :mode :pvp :size :3x3}]
+        (setup!)
+        (save-state! state)
+        (let [open-game (get-open-game)]
+          (should (set/subset? (set state) (set open-game))))))
+
+    (it "gets finished games"
+      (setup!)
+      (play-pvp-game)
+      (let [finished (get-finished-games)]
+        (should= 1 (count finished))
+        (should= 7 (count (first (vals finished))))))))
