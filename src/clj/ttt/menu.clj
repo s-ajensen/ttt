@@ -45,8 +45,9 @@
 
 (defn fmt-replays []
   (let [replays (get-finished-games)]
-    (pnt (->> (map #(fmt-replay (key %) (val %)) replays)
-      (map create-link)))))
+    (->> (map #(fmt-replay (key %) (val %)) replays)
+      (map create-link)
+      vec)))
 
 (def menus
   {:main-menu main-opts

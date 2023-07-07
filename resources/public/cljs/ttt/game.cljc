@@ -31,3 +31,9 @@
 (defmethod progress-game :cvp [state selection]
   (progress-ai state selection))
 
+(defmethod progress-game :cvc [state selection]
+  (loop [state state]
+    (if (m/game-over? (:state state))
+      state
+      (recur (m/next-move (:difficulty state))))))
+
