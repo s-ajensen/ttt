@@ -24,7 +24,7 @@
   (let [board (:state state)]
     (let [new-board (m/move selection (m/cur-token board) board)]
       (if (not (m/game-over? new-board))
-        (m/next-move (:difficulty state))
+        (m/next-move (:difficulty state) new-board)
         new-board))))
 
 (defmethod progress-game :pvc [state selection]
