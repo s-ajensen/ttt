@@ -22,8 +22,10 @@
 
 (defn progress-ai [state selection]
   (let [board (:state state)]
-    (->> (m/move selection (m/cur-token board) board)
-      (m/next-move (:difficulty state)))))
+    (let [new-board (m/move selection (m/cur-token board) board)]
+      (if (not (m/game-over? new-board))
+        (m/next-move (:difficulty state))
+        new-board))))
 
 (defmethod progress-game :pvc [state selection]
   (progress-ai state selection))
