@@ -44,15 +44,6 @@
 
 (def menu-size [150 25])
 
-(def game-selectors [:cont-game :replay-menu :new-game])
-
-(defn state-type [state]
-  (let [type (:state state)]
-    (cond
-      (contains? menus type) :menu
-      (some #(= type %) game-selectors) type
-      :else :game)))
-
 (defmulti get-buttons state-type)
 
 (defmethod get-buttons :menu [state]

@@ -2,6 +2,7 @@
   (:require [quil.core :as q]
             [speclj.core :refer :all]
             [ttt.util :refer :all]
+            [ttt.menu :refer :all]
             [ttt.ui :refer :all]))
 
 (describe "gui"

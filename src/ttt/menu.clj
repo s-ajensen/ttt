@@ -90,6 +90,15 @@
   (if (not= :new-game (:state cur-state))
     (print (as-string (:state cur-state)))))
 
+(def game-selectors [:cont-game :replay-menu :new-game])
+
+(defn state-type [state]
+  (let [type (:state state)]
+    (cond
+      (contains? menus type) :menu
+      (some #(= type %) game-selectors) type
+      :else :game)))
+
 (defmulti next-state (fn [state selection]
                        (cond
                          (contains? menus (:state state)) :menu
