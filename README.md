@@ -12,7 +12,7 @@
 **Run GUI Program:**
 `clj -M:start-gui`
 
-### Cljd targets
+### Cljs targets
 **Compile & Run Specs**
 `clj -m:cljs`
 
