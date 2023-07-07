@@ -1,6 +1,0 @@
-{
-  "destination": "edn",
-  "edn-file": "db.edn",
-  "dbtype": "sqlite",
-  "dbname": "db/tic-tac-toe.db"
-}
