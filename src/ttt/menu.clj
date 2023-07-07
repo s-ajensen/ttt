@@ -74,6 +74,12 @@
   (let [def-link  {:link (:state cur-menu)}]
     (get (opts-idx cur-menu) selection def-link)))
 
+(defn start-menu []
+  (let [open-game (get-open-game)]
+    (if (some? open-game)
+      {:state :main-menu-cont}
+      {:state :main-menu})))
+
 (defmulti render (fn [state]
                    (cond
                      (contains? menus (:state state)) :menu

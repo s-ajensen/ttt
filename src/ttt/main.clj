@@ -19,12 +19,6 @@
       (if (not= "q" input)
         (game-loop (next-state state (parse-input input)))))))
 
-(defn start-menu []
-  (let [open-game (get-open-game)]
-    (if (some? open-game)
-      {:state :main-menu-cont}
-      {:state :main-menu})))
-
 (declare ttt)
 
 (defn -main
