@@ -44,7 +44,7 @@
   (and (not (win? board)) (empty? (filter nil? board))))
 
 (defn game-over? [board]
-  (or (win? board) (empty? (filter nil? board))))
+  (or (win? board) (tie? board)))
 
 (defn winner [board]
   (cond
@@ -56,18 +56,17 @@
   (->> (open-moves board)
     (map #(move % (cur-token board) board))))
 
-(defn eval-pos [board depth]
+(defn eval-pos [board maximizing?]
   (cond
-    (win? board) 10
-    (tie? board) 0
-    :else -10))
+    (win? board) (* (if maximizing? 1 -1) 10)
+    (tie? board) 0))
 
 (defn minimax [board depth maximizing?]
   (cond
-    (game-over? board)  (eval-pos board depth)
+    (game-over? board)  (eval-pos board maximizing?)
     (zero? depth)       0
-    maximizing?         (apply max (map #(minimax % (dec depth) false) (possible-moves board)))
-    :else               (apply min (map #(minimax % (dec depth) true) (possible-moves board)))))
+    maximizing?         (apply min (map #(minimax % (dec depth) false) (possible-moves board)))
+    :else               (apply max (map #(minimax % (dec depth) true) (possible-moves board)))))
 
 (def full-depth 10)
 (def performant-depth 4)
@@ -84,4 +83,4 @@
   (apply min-key #(minimax % (get-depth board) true) (possible-moves board)))
 
 (defmethod next-move :med [_ board]
-  (apply max-key #(minimax % 3 true) (possible-moves board)))
+  (apply max-key #(minimax % 2 true) (possible-moves board)))
