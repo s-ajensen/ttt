@@ -14,7 +14,7 @@
 
 ### Cljs targets
 **Compile & Run Specs**
-`clj -m:cljs`
+`clj -M:cljs`
 
 This will produce a file `resources/public/cljs/app.js` which contains the compiled ClojureScript.
 
