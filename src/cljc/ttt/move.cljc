@@ -52,53 +52,36 @@
     (not (win? board)) nil
     :else (next-token board)))
 
-(declare best-move)
-
-(defn- prioritize [board depth]
-  (cond
-    (win? board) (- 10 depth)
-    (tie? board) 0
-    (= 2 depth) 0
-    :else (let [best (best-move board)]
-            (* -1 (prioritize
-                    (move best (cur-token board) board)
-                    (inc depth))))))
-
-(def prioritize (memoize prioritize))
-
-(defn max-move [moves]
-  (->> moves
-    (first)
-    (first)))
-
 (defn possible-moves [board]
   (->> (open-moves board)
     (map #(move % (cur-token board) board))))
 
-(defn sort-moves [board]
-  (->> (possible-moves board)
-    (map #(prioritize % 0))
-    (zipmap (open-moves board))
-    (sort-by second >)))
+(defn eval-pos [board depth]
+  (cond
+    (win? board) 10
+    (tie? board) 0
+    :else -10))
 
-(defn best-move [board]
-  (max-move (sort-moves board)))
+(defn minimax [board depth maximizing?]
+  (cond
+    (game-over? board)  (eval-pos board depth)
+    (zero? depth)       0
+    maximizing?         (apply max (map #(minimax % (dec depth) false) (possible-moves board)))
+    :else               (apply min (map #(minimax % (dec depth) true) (possible-moves board)))))
+
+(def full-depth 10)
+(def performant-depth 4)
+(defn get-depth [board]
+  (if (= 3 (util/length board)) full-depth performant-depth))
 
 (defmulti next-move
   (fn [difficulty board] difficulty))
 
 (defmethod next-move :default [_ board]
-  (move (best-move board) (cur-token board) board))
+  (apply max-key #(minimax % (get-depth board) true) (possible-moves board)))
 
 (defmethod next-move :easy [_ board]
-  (let [chosen-move (->> (sort-moves board)
-                      (last)
-                      (first))]
-    (move chosen-move (cur-token board) board)))
+  (apply min-key #(minimax % (get-depth board) true) (possible-moves board)))
 
 (defmethod next-move :med [_ board]
-  (let [chosen-move (->> (sort-moves board)
-                      (cycle)
-                      (second)
-                      (first))]
-    (move chosen-move (cur-token board) board)))
+  (apply max-key #(minimax % 3 true) (possible-moves board)))

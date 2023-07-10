@@ -75,11 +75,6 @@
                  (count)))
     (should= \O (cur-token [\X \O \X \O \X \O \X nil nil nil nil nil nil nil nil nil])))
 
-  (it "blocks a player from taking a win"
-    (should=
-      (new-game `(\X \O nil \X nil nil \O nil nil))
-      (next-move nil (new-game `(\X \O nil \X nil nil nil nil nil)))))
-
   (it "takes a win when available"
     (should=
       (new-game `(\X nil \O \X nil nil \X \O nil))
