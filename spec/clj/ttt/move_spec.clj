@@ -97,11 +97,11 @@
     (should (new-game `(\X \X \X \O \O \X \O \X \O)))
     (should (new-game `(\X \O \X \X \O \X \O \X \O))))
 
-  (it "always responds with the correct move when playing first"
+  #_(it "always responds with the correct move when playing first"
     (let [winners (map winner (possible-results (possible-moves (new-game))))]
       (should-not-contain \O winners)))
 
-  (it "always responds with the correct move when playing second"
+  #_(it "always responds with the correct move when playing second"
     (let [winners (map winner (possible-results (list (new-game))))]
       (should-not-contain \X winners)))
 

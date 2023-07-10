@@ -61,12 +61,14 @@
     (win? board) (* (if maximizing? 1 -1) (+ depth 10))
     (tie? board) 0))
 
-(defn minimax [board depth maximizing?]
+(defn- minimax [board depth maximizing?]
   (cond
     (game-over? board)  (eval-pos board depth maximizing?)
     (zero? depth)       0
     maximizing?         (apply min (map #(minimax % (dec depth) false) (possible-moves board)))
     :else               (apply max (map #(minimax % (dec depth) true) (possible-moves board)))))
+
+(def minimax (memoize minimax))
 
 (def full-depth 10)
 (def performant-depth 4)
