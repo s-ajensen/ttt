@@ -56,14 +56,14 @@
   (->> (open-moves board)
     (map #(move % (cur-token board) board))))
 
-(defn eval-pos [board maximizing?]
+(defn eval-pos [board depth maximizing?]
   (cond
-    (win? board) (* (if maximizing? 1 -1) 10)
+    (win? board) (* (if maximizing? 1 -1) (+ depth 10))
     (tie? board) 0))
 
 (defn minimax [board depth maximizing?]
   (cond
-    (game-over? board)  (eval-pos board maximizing?)
+    (game-over? board)  (eval-pos board depth maximizing?)
     (zero? depth)       0
     maximizing?         (apply min (map #(minimax % (dec depth) false) (possible-moves board)))
     :else               (apply max (map #(minimax % (dec depth) true) (possible-moves board)))))
