@@ -10,6 +10,7 @@
            cljsjs/react-dom {:mvn/version "17.0.2-0"}
            reagent/reagent {:mvn/version "1.1.0"}
            com.cleancoders.c3kit/apron {:mvn/version "1.0.2"}
+           com.cleancoders.speclj-junit-xml/speclj-junit-xml  {:git/url "https://github.com/cleancoders/speclj-junit-xml" :git/sha "e2200b80b331be5c58c6a586dea44d3a8ea88ffc"}
            speclj/speclj {:mvn/version "3.4.3"}
            }
  :aliases {
