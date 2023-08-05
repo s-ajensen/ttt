@@ -5,7 +5,7 @@ jobs:
       - image: cimg/clojure:1.11.1
     steps:
       - checkout
-      - run: clojure -M:test:spec -f junit-xml-reporter || true
+      - run: clojure -M:test:spec -f junit-xml-reporter >> ./spec_results.xml || true
       - run:
           name: Review Spec Results
           command: |
