@@ -1,0 +1,14 @@
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: cimg/clojure:1.11.1
+    steps:
+      - checkout
+      - run: clojure -M:test:spec -f junit-xml-reporter || true
+      - run:
+          name: Review Spec Results
+          command: |
+            cat ./spec_results.xml
+      - store_test_results:
+          path: ./spec_results.xml
